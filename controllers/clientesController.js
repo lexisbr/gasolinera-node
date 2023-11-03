@@ -108,3 +108,19 @@ exports.acumularPuntos = async (req, res) => {
     return res.status(500).json({ message: "Server error" });
   }
 };
+
+exports.obtenerIdCliente = async (req, res) => {
+  try {
+    const nitCliente = req.params.nitCliente;
+    const cliente = await Cliente.findOne({
+      where: { nit: nitCliente },
+    });
+    if (cliente === null) {
+      return res.status(400).json({ message: "El cliente no existe" });
+    }
+
+    return res.status(200).json(cliente.id_cliente);
+  } catch (error) {
+    
+  }
+};

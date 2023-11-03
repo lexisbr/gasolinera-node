@@ -1,11 +1,12 @@
 const { Router } = require('express');
 const router = Router();
 
-const transaccionesController = require('../controllers/clientesController');
+const clientesController = require('../controllers/clientesController');
 
-router.get("/consultar-puntos/:idCliente", transaccionesController.consultarPuntos);
-router.put("/canjear-puntos", transaccionesController.canjearPuntos);
-router.put("/acumular-puntos", transaccionesController.acumularPuntos);
+router.get("/consultar-puntos/:idCliente", clientesController.consultarPuntos);
+router.get("/:nitCliente", clientesController.obtenerIdCliente);
+router.put("/canjear-puntos", clientesController.canjearPuntos);
+router.put("/acumular-puntos", clientesController.acumularPuntos);
 
 
 module.exports = function(app) {
