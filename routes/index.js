@@ -3,7 +3,7 @@ const router = Router();
 
 const clientesController = require('../controllers/clientesController');
 
-router.get("/consultar-puntos/:idCliente", clientesController.consultarPuntos);
+router.get("/consultar-puntos/:nitCliente", clientesController.consultarPuntos);
 router.get("/:nitCliente", clientesController.obtenerIdCliente);
 router.put("/canjear-puntos", clientesController.canjearPuntos);
 router.put("/acumular-puntos", clientesController.acumularPuntos);

@@ -3,22 +3,22 @@ const Cliente = db.cliente;
 
 exports.consultarPuntos = async (req, res) => {
   try {
-    const idCliente = req.params.idCliente;
+    const nit = req.params.nitCliente;
     const cliente = await Cliente.findOne({
-      where: { id_cliente: idCliente },
+      where: { nit: nit },
     });
     if (cliente === null) {
       return res.status(400).json({ message: "El cliente no existe" });
     }
 
     const puntos = await Cliente.findOne({
-      attributes: ["puntos"],
+      attributes: ["puntos", "id_cliente"],
       where: {
-        id_cliente: idCliente,
+        nit: nit,
       },
     });
 
-    return res.status(200).json(puntos);
+    return res.status(200).json(puntos.puntos);
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Server error" });
@@ -42,13 +42,14 @@ exports.canjearPuntos = async (req, res) => {
       },
     });
 
-    if (puntosActuales.dataValues.puntos < puntosCanje) {
-      return res
-        .status(400)
-        .json({ message: "El cliente no tiene suficientes puntos" });
+    let nuevosPuntos = 0;
+    if (puntosActuales.dataValues.puntos > puntosCanje) {
+      nuevosPuntos = puntosActuales.dataValues.puntos - puntosCanje; 
+      precioPorPagar = 0;
+    } else {
+      precioPorPagar = puntosCanje - puntosActuales.dataValues.puntos;
     }
 
-    const nuevosPuntos = puntosActuales.dataValues.puntos - puntosCanje;
 
     await Cliente.update(
       {
@@ -61,10 +62,10 @@ exports.canjearPuntos = async (req, res) => {
       }
     );
 
-    return res.status(200).json("Se han canjeado los puntos");
+    return res.status(200).json({ success: true, message: precioPorPagar });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: "Server error" });
+    return res.status(500).json({ success: false, message: "Server error" });
   }
 };
 
@@ -102,10 +103,12 @@ exports.acumularPuntos = async (req, res) => {
       }
     );
 
-    return res.status(200).json("Se han acumulado los puntos");
+    return res
+      .status(200)
+      .json({ success: true, message: "Se han acumulado los puntos" });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: "Server error" });
+    return res.status(500).json({ success: false, message: "Server error" });
   }
 };
 
@@ -120,7 +123,5 @@ exports.obtenerIdCliente = async (req, res) => {
     }
 
     return res.status(200).json(cliente.id_cliente);
-  } catch (error) {
-    
-  }
+  } catch (error) {}
 };
